@@ -749,9 +749,9 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
         cam_info_msg.D.resize(5);
         cam_info_msg.D[0] = _colorIntrinsics.k1;
         cam_info_msg.D[1] = _colorIntrinsics.k2;
-        cam_info_msg.D[2] = _colorIntrinsics.k3;
-        cam_info_msg.D[3] = _colorIntrinsics.p1;
-        cam_info_msg.D[4] = _colorIntrinsics.p2;
+        cam_info_msg.D[2] = _colorIntrinsics.p1;
+        cam_info_msg.D[3] = _colorIntrinsics.p2;
+        cam_info_msg.D[4] = _colorIntrinsics.k3;
         cam_info_msg.K.fill( 0.0 );
         cam_info_msg.K[0] = _colorIntrinsics.fx;
         cam_info_msg.K[2] = _colorIntrinsics.cx;
@@ -1053,9 +1053,9 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
         cam_info_msg.D.resize(5);
         cam_info_msg.D[0] = _depthIntrinsics.k1;
         cam_info_msg.D[1] = _depthIntrinsics.k2;
-        cam_info_msg.D[2] = _depthIntrinsics.k3;
-        cam_info_msg.D[3] = _depthIntrinsics.p1;
-        cam_info_msg.D[4] = _depthIntrinsics.p2;
+        cam_info_msg.D[2] = _depthIntrinsics.p1;
+        cam_info_msg.D[3] = _depthIntrinsics.p2;
+        cam_info_msg.D[4] = _depthIntrinsics.k3;
         cam_info_msg.K.fill( 0.0 );
         cam_info_msg.K[0] = _depthIntrinsics.fx;
         cam_info_msg.K[2] = _depthIntrinsics.cx;
