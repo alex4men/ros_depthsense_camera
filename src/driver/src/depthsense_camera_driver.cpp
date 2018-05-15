@@ -38,12 +38,12 @@ DepthSenseDriver::DepthSenseDriver()
         _vertex_pub = _nh.advertise<sensor_msgs::PointCloud2>("vertex_data", 1, false);
 
     if( _enable_rgb )
-        _rgb_pub = _rgb_ImgTr.advertiseCamera("rgb_image", 1, false);
+        _rgb_pub = _rgb_ImgTr.advertiseCamera("rgb/image", 1, false);
 
     if( _enable_depth_confidence )
     {
-        _depth_pub = _depth_ImgTr.advertiseCamera("depth_image", 1,false);
-        _confidence_pub = _confidence_ImgTr.advertiseCamera("confidence_image", 1, false);
+        _depth_pub = _depth_ImgTr.advertiseCamera("depth/image", 1,false);
+        _confidence_pub = _confidence_ImgTr.advertiseCamera("confidence/image", 1, false);
     }
 
     if( _enable_ptcloud && _enable_rgb && _enable_registered )
@@ -760,6 +760,10 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
         cam_info_msg.K[8] = 1.0;
 
         cam_info_msg.R.fill( 0.0 );
+        cam_info_msg.R[0] = 1.0;
+        cam_info_msg.R[4] = 1.0;
+        cam_info_msg.R[8] = 1.0;
+
         cam_info_msg.P.fill( 0.0 );
         cam_info_msg.P[0] = _colorIntrinsics.fx;
         cam_info_msg.P[2] = _colorIntrinsics.cx;
@@ -1060,6 +1064,10 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
         cam_info_msg.K[8] = 1.0;
 
         cam_info_msg.R.fill( 0.0 );
+        cam_info_msg.R[0] = 1.0;
+        cam_info_msg.R[4] = 1.0;
+        cam_info_msg.R[8] = 1.0;
+
         cam_info_msg.P.fill( 0.0 );
         cam_info_msg.P[0] = _depthIntrinsics.fx;
         cam_info_msg.P[2] = _depthIntrinsics.cx;
