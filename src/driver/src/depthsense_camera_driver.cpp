@@ -187,6 +187,7 @@ void DepthSenseDriver::release()
 #define PAR_ENABLE_DENOISE          "ds_camera/enable_denoise"
 #define PAR_CONF_THRESH             "ds_camera/confidence_thresh"
 #define PAR_POW_LINE_FREQ           "ds_camera/power_line_freq"
+#define PAR_DEPTH_MODE              "ds_camera/depth_mode"
 
 void DepthSenseDriver::loadParams()
 {
@@ -288,6 +289,16 @@ void DepthSenseDriver::loadParams()
     {
         _power_line_freq = 50;
         _nh.setParam( PAR_POW_LINE_FREQ, _power_line_freq );
+    }
+
+    if( _nh.hasParam( PAR_DEPTH_MODE ) )
+    {
+        _nh.getParam( PAR_DEPTH_MODE, _depth_mode );
+    }
+    else
+    {
+        _depth_mode = 0;
+        _nh.setParam( PAR_DEPTH_MODE, _depth_mode );
     }
 }
 
@@ -444,6 +455,7 @@ bool DepthSenseDriver::addDepthNode(DepthSense::Device device, DepthSense::Node 
         depthNode.setConfidenceThreshold( _conf_thresh );
         depthNode.setEnableDenoising( _enable_denoise );
         configuration.framerate = 60; // TODO create param
+        configuration = configurations[_depth_mode];
         // <<<<< Parameters
 
         try
@@ -760,9 +772,18 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
         cam_info_msg.K[8] = 1.0;
 
         cam_info_msg.R.fill( 0.0 );
-        cam_info_msg.R[0] = 1.0;
-        cam_info_msg.R[4] = 1.0;
-        cam_info_msg.R[8] = 1.0;
+        // cam_info_msg.R[0] = 1.0;
+        // cam_info_msg.R[4] = 1.0;
+        // cam_info_msg.R[8] = 1.0;
+        cam_info_msg.R[0] = _extrinsics.r11;
+        cam_info_msg.R[1] = _extrinsics.r12;
+        cam_info_msg.R[2] = _extrinsics.r13;
+        cam_info_msg.R[3] = _extrinsics.r21;
+        cam_info_msg.R[4] = _extrinsics.r22;
+        cam_info_msg.R[5] = _extrinsics.r23;
+        cam_info_msg.R[6] = _extrinsics.r31;
+        cam_info_msg.R[7] = _extrinsics.r32;
+        cam_info_msg.R[8] = _extrinsics.r33;
 
         cam_info_msg.P.fill( 0.0 );
         cam_info_msg.P[0] = _colorIntrinsics.fx;
@@ -770,6 +791,9 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
         cam_info_msg.P[5] = _colorIntrinsics.fy;
         cam_info_msg.P[6] = _colorIntrinsics.cy;
         cam_info_msg.P[10] = 1.0;
+        cam_info_msg.P[3] = _extrinsics.t1;
+        cam_info_msg.P[7] = _extrinsics.t2;
+        cam_info_msg.P[11] = _extrinsics.t3;
 
         cam_info_msg.header = _lastRgbMsgHeader;
 
@@ -803,7 +827,7 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
             if( _enable_ptcloud )
                 br.sendTransform( tf::StampedTransform(transform, ros::Time::now(), "depth_frame", "rgb_frame") );
             else
-                br.sendTransform( tf::StampedTransform(transform, ros::Time::now(), "world", "rgb_frame") );
+                br.sendTransform( tf::StampedTransform(transform, ros::Time::now(), "odom", "rgb_frame") );
         }
     }
     // <<<<< RGB frame
@@ -1118,7 +1142,7 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
                 q.setRPY( 90.0*DEG2RAD, 0.0*DEG2RAD, 0.0*DEG2RAD);
 
             transform.setRotation(q);
-            br.sendTransform( tf::StampedTransform(transform, now, "world", "depth_frame") );
+            br.sendTransform( tf::StampedTransform(transform, now, "odom", "depth_frame") );
         }
     }
 }
