@@ -2,7 +2,7 @@
   <arg name="camera" default="camera" />
   <arg name="pointcloud" default="points"/>
   <arg name="rgb" default="rgb/image_raw"/>
-  <arg name="depth" default="depth_registered/image_raw"/>
+  <arg name="depth" default="depth/image_raw"/>
   <node pkg="ros_depthsense_camera" type="depthsense_camera_node" name="depthsense_camera" ns="$(arg camera)" output="screen">
     <remap from="vertex_data" to="$(arg pointcloud)"/>
     <remap from="rgb/image" to="$(arg rgb)"/>
