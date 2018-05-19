@@ -22,7 +22,7 @@
   <!-- this also includes all other launch.xml files in launch/includes -->
   <include file="$(find rgbd_launch)/launch/includes/processing.launch.xml" ns="$(arg camera)">
     <arg name="manager" value="$(arg manager)" />
-    <arg name="rgb_processing"                  value="false"/>
+    <arg name="rgb_processing"                  value="true"/>
     <arg name="ir_processing"                   value="false"/>
     <arg name="depth_processing"                value="true"/>
     <arg name="depth_registered_processing"     value="true"/>
