@@ -827,7 +827,7 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
             if( _enable_ptcloud )
                 br.sendTransform( tf::StampedTransform(transform, ros::Time::now(), "depth_frame", "rgb_frame") );
             else
-                br.sendTransform( tf::StampedTransform(transform, ros::Time::now(), "odom", "rgb_frame") );
+                br.sendTransform( tf::StampedTransform(transform, ros::Time::now(), "camera_link", "rgb_frame") );
         }
     }
     // <<<<< RGB frame
@@ -861,6 +861,10 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
     // ROS_INFO_STREAM( "Received depth frame #" << info->sampleCount );
 
     ros::Time now = ros::Time::now();
+
+    _lastPtCloudMsgHeader.stamp = now;
+    _lastPtCloudMsgHeader.seq = info->totalSampleCount;
+    _lastPtCloudMsgHeader.frame_id = "depth_frame";
 
     double accX = 0.0;
     double accY = 0.0;
@@ -959,7 +963,7 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
             if (uv_map != NULL && _vertex_reg_pub.getNumSubscribers() > 0) {
                 //prep a consistent header
 
-                _lastPtCloudMsgHeader.stamp = ros::Time::now();
+                _lastPtCloudMsgHeader.stamp = now;
                 _lastPtCloudMsgHeader.seq = info->totalSampleCount;
                 _lastPtCloudMsgHeader.frame_id = "depth_frame";
 
@@ -1048,8 +1052,8 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
     if(_enable_depth_confidence)
     {
         sensor_msgs::ImagePtr depth_msg = boost::make_shared<sensor_msgs::Image>();
-        depth_msg->header.stamp = _lastPtCloudMsgHeader.stamp;
-        depth_msg->encoding = sensor_msgs::image_encodings::MONO16;
+        depth_msg->header = _lastPtCloudMsgHeader;
+        depth_msg->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
         depth_msg->width = info->width;
         depth_msg->height = info->height;
         depth_msg->step = depth_msg->width * sizeof(int16_t);
@@ -1059,8 +1063,8 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
         memcpy( &depth_msg->data[0], data.depthMap, imgSize );
 
         sensor_msgs::ImagePtr confidence_msg = boost::make_shared<sensor_msgs::Image>();
-        confidence_msg->header.stamp = _lastPtCloudMsgHeader.stamp;
-        confidence_msg->encoding = sensor_msgs::image_encodings::MONO16;
+        confidence_msg->header = _lastPtCloudMsgHeader;
+        confidence_msg->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
         confidence_msg->width = info->width;
         confidence_msg->height = info->height;
         confidence_msg->step = depth_msg->width * sizeof(int16_t);
@@ -1099,9 +1103,10 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
         cam_info_msg.P[6] = _depthIntrinsics.cy;
         cam_info_msg.P[10] = 1.0;
 
-        cam_info_msg.header.stamp = ros::Time::now();
-        cam_info_msg.header.seq = info->totalSampleCount;
-        cam_info_msg.header.frame_id = "depth_frame";
+        cam_info_msg.header = _lastPtCloudMsgHeader;
+        // cam_info_msg.header.stamp = now;
+        // cam_info_msg.header.seq = info->totalSampleCount;
+        // cam_info_msg.header.frame_id = "depth_frame";
 
         cam_info_msg.width = info->width;
         cam_info_msg.height = info->height;
@@ -1142,7 +1147,7 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
                 q.setRPY( 90.0*DEG2RAD, 0.0*DEG2RAD, 0.0*DEG2RAD);
 
             transform.setRotation(q);
-            br.sendTransform( tf::StampedTransform(transform, now, "odom", "depth_frame") );
+            br.sendTransform( tf::StampedTransform(transform, now, "camera_link", "depth_frame") );
         }
     }
 }

@@ -1,35 +1,41 @@
 <launch>
   <arg name="camera" default="camera" />
-  <arg name="pointcloud" default="points"/>
-  <arg name="rgb" default="rgb/image_raw"/>
-  <arg name="depth" default="depth/image_raw"/>
-  <node pkg="ros_depthsense_camera" type="depthsense_camera_node" name="depthsense_camera" ns="$(arg camera)" output="screen">
-    <remap from="vertex_data" to="$(arg pointcloud)"/>
-    <remap from="rgb/image" to="$(arg rgb)"/>
-    <remap from="depth/image" to="$(arg depth)"/>
-  </node>
+  <!-- Push down all topics/nodelets into "camera" namespace -->
+  <group ns="$(arg camera)">
 
-  
-  <arg name="manager" default="camera_nodelet_manager" />
+    <arg name="pointcloud" default="points"/>
+    <arg name="rgb" default="rgb/image_raw"/>
+    <arg name="depth" default="depth/image_raw"/>
+    <node pkg="ros_depthsense_camera" type="depthsense_camera_node" name="depthsense_camera" output="screen">
+      <remap from="vertex_data" to="$(arg pointcloud)"/>
+      <remap from="rgb/image" to="$(arg rgb)"/>
+      <remap from="depth/image" to="$(arg depth)"/>
+    </node>
 
-  <!-- for testing manager.launch.xml -->
-  <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
-    <arg name="name" value="$(arg manager)" />
-    <arg name="num_worker_threads"  value="4" />
-  </include>
+    
+    <arg name="manager" default="camera_nodelet_manager" />
 
-  <!-- for testing processing.launch.xml -->
-  <!-- this also includes all other launch.xml files in launch/includes -->
-  <include file="$(find rgbd_launch)/launch/includes/processing.launch.xml" ns="$(arg camera)">
-    <arg name="manager" value="$(arg manager)" />
-    <arg name="rgb_processing"                  value="true"/>
-    <arg name="ir_processing"                   value="false"/>
-    <arg name="depth_processing"                value="true"/>
-    <arg name="depth_registered_processing"     value="true"/>
-    <arg name="disparity_processing"            value="false"/>
-    <arg name="disparity_registered_processing" value="false"/>
-    <arg name="hw_registered_processing"        value="true" />
-    <arg name="sw_registered_processing"        value="true" />
+    <!-- for testing manager.launch.xml -->
+    <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
+      <arg name="name" value="$(arg manager)" />
+      <arg name="num_worker_threads"  value="4" />
+    </include>
 
-  </include>
+    <!-- for testing processing.launch.xml -->
+    <!-- this also includes all other launch.xml files in launch/includes -->
+    <include file="$(find rgbd_launch)/launch/includes/processing.launch.xml">
+      <arg name="manager" value="$(arg manager)" />
+      <arg name="rgb_processing"                  value="true"/>
+      <arg name="ir_processing"                   value="false"/>
+      <arg name="depth_processing"                value="true"/>
+      <arg name="depth_registered_processing"     value="true"/>
+      <arg name="disparity_processing"            value="false"/>
+      <arg name="disparity_registered_processing" value="false"/>
+      <arg name="hw_registered_processing"        value="true" />
+      <arg name="sw_registered_processing"        value="true" />
+
+    </include>
+
+  </group> <!-- camera -->
+
 </launch>
