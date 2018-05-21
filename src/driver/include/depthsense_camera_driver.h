@@ -119,7 +119,7 @@ private:
     bool _enable_denoise;       ///< Enable denoise filter [DYN]
     bool _enable_registered;    ///< Publish 3d registered pointcloud if true and @ref _enable_rgb is true and @ref _enable_ptcloud is true
     bool _enable_accel;         ///< Publish accelerometer data if true
-    int _depth_mode;            ///< Choose one of the depth camera configurations
+    int  _depth_mode;           ///< Choose one of the depth camera configurations
 
     // <<<<< node params
 
