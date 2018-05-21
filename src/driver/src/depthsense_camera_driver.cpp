@@ -348,6 +348,7 @@ void DepthSenseDriver::onDeviceAdded(DepthSense::Context context, DepthSense::De
     _colorIntrinsics = params.colorIntrinsics;
     _extrinsics = params.extrinsics;
 
+    ROS_INFO("Left-handed camera parameters:");    
     ROS_INFO("depth intrinsics: width %d, height %d, fx %f, fy %f, cx %f, cy %f, k1 %f, k2 %f, k3 %f, p1 %f, p2 %f",
              _depthIntrinsics.width,
              _depthIntrinsics.height,
@@ -454,6 +455,56 @@ bool DepthSenseDriver::addDepthNode(DepthSense::Device device, DepthSense::Node 
         // >>>>> Parameters
         depthNode.setConfidenceThreshold( _conf_thresh );
         depthNode.setEnableDenoising( _enable_denoise );
+
+        depthNode.setCoordinateSystemType(DepthSense::COORDINATE_SYSTEM_TYPE_RIGHT_HANDED);
+
+        DepthSense::StereoCameraParameters params;
+        params = device.getStereoCameraParameters();
+
+        _depthIntrinsics = params.depthIntrinsics;
+        _colorIntrinsics = params.colorIntrinsics;
+        _extrinsics = params.extrinsics;
+
+        ROS_INFO("Right-handed camera parameters:");
+        ROS_INFO("depth intrinsics: width %d, height %d, fx %f, fy %f, cx %f, cy %f, k1 %f, k2 %f, k3 %f, p1 %f, p2 %f",
+             _depthIntrinsics.width,
+             _depthIntrinsics.height,
+             _depthIntrinsics.fx,
+             _depthIntrinsics.fy,
+             _depthIntrinsics.cx,
+             _depthIntrinsics.cy,
+             _depthIntrinsics.k1,
+             _depthIntrinsics.k2,
+             _depthIntrinsics.k3,
+             _depthIntrinsics.p1,
+             _depthIntrinsics.p2);
+        ROS_INFO("color intrinsics: width %d, height %d, fx %f, fy %f, cx %f, cy %f, k1 %f, k2 %f, k3 %f, p1 %f, p2 %f",
+             _colorIntrinsics.width,
+             _colorIntrinsics.height,
+             _colorIntrinsics.fx,
+             _colorIntrinsics.fy,
+             _colorIntrinsics.cx,
+             _colorIntrinsics.cy,
+             _colorIntrinsics.k1,
+             _colorIntrinsics.k2,
+             _colorIntrinsics.k3,
+             _colorIntrinsics.p1,
+             _colorIntrinsics.p2);
+        ROS_INFO("extrinsics: r11 %f, r12 %f, r13 %f, r21 %f, r22 %f, r23 %f, r31 %f, r32 %f, r33 %f, t1 %f, t2 %f, t3 %f",
+             _extrinsics.r11,
+             _extrinsics.r12,
+             _extrinsics.r13,
+             _extrinsics.r21,
+             _extrinsics.r22,
+             _extrinsics.r23,
+             _extrinsics.r31,
+             _extrinsics.r32,
+             _extrinsics.r33,
+             _extrinsics.t1,
+             _extrinsics.t2,
+             _extrinsics.t3);
+        ROS_INFO("---------------------------------------------------");
+        
         configuration.framerate = 60; // TODO create param
         configuration = configurations[_depth_mode];
         // <<<<< Parameters
@@ -772,9 +823,6 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
         cam_info_msg.K[8] = 1.0;
 
         cam_info_msg.R.fill( 0.0 );
-        // cam_info_msg.R[0] = 1.0;
-        // cam_info_msg.R[4] = 1.0;
-        // cam_info_msg.R[8] = 1.0;
         cam_info_msg.R[0] = _extrinsics.r11;
         cam_info_msg.R[1] = _extrinsics.r12;
         cam_info_msg.R[2] = _extrinsics.r13;

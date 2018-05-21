@@ -6,6 +6,10 @@
     <arg name="pointcloud" default="points"/>
     <arg name="rgb" default="rgb/image_raw"/>
     <arg name="depth" default="depth/image_raw"/>
+
+    <param name="ds_camera/depth_mode" type="int" value="0"/>
+    <param name="ds_camera/enable_accel" type="bool" value="false"/>
+
     <node pkg="ros_depthsense_camera" type="depthsense_camera_node" name="depthsense_camera" output="screen">
       <remap from="vertex_data" to="$(arg pointcloud)"/>
       <remap from="rgb/image" to="$(arg rgb)"/>
@@ -31,7 +35,7 @@
       <arg name="depth_registered_processing"     value="true"/>
       <arg name="disparity_processing"            value="false"/>
       <arg name="disparity_registered_processing" value="false"/>
-      <arg name="hw_registered_processing"        value="true" />
+      <arg name="hw_registered_processing"        value="false" />
       <arg name="sw_registered_processing"        value="true" />
 
     </include>
