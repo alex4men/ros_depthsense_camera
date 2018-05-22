@@ -342,7 +342,7 @@ void DepthSenseDriver::onDeviceAdded(DepthSense::Context context, DepthSense::De
     ROS_INFO_STREAM( " Serial:       " << device.getSerialNumber() );
 
     DepthSense::StereoCameraParameters params;
-    params = device.getStereoCameraParameters();
+    params = device.getStereoCameraParameters(); // TODO: Change to right-handed coordinates before requesting params
 
     _depthIntrinsics = params.depthIntrinsics;
     _colorIntrinsics = params.colorIntrinsics;
