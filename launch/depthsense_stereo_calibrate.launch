@@ -53,21 +53,10 @@
       <param name="scale_height" type="double" value="2"/>
       <param name="scale_width" type="double" value="2"/>
 
-      <remap from="in_image" to="confidence_8/image"/>
+      <remap from="image" to="confidence_8/image"/>
       <remap from="camera_info" to="confidence_8/camera_info"/>
-      <remap from="~out_image" to="confidence_s/image"/>
+      <remap from="~image" to="confidence_s/image"/>
       <remap from="~camera_info" to="confidence_s/camera_info"/>
-    </node>
-
-    <!-- Then, upscale confidence map to match rgb image dimensions -->
-    <node pkg="nodelet" type="nodelet" name="resize_rgb" args="load image_proc/resize $(arg manager)" output="screen">
-      <param name="scale_height" type="double" value="1"/>
-      <param name="scale_width" type="double" value="1"/>
-
-      <remap from="in_image" to="rgb/image_raw"/>
-      <remap from="camera_info" to="rgb/camera_info"/>
-      <remap from="~out_image" to="rgb_s/image_raw"/>
-      <remap from="~camera_info" to="rgb_s/camera_info"/>
     </node>
 
   </group> <!-- camera -->
