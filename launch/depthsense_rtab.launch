@@ -5,7 +5,7 @@
 
     <arg name="pointcloud" default="points"/>
     <arg name="rgb" default="rgb/image_raw"/>
-    <arg name="depth" default="depth/image_raw"/>
+    <arg name="depth" default="depth_qvga/image_raw"/>
 
     <param name="ds_camera/depth_mode" type="int" value="0"/>
     <param name="ds_camera/enable_accel" type="bool" value="false"/>
@@ -39,6 +39,17 @@
       <arg name="sw_registered_processing"        value="true" />
 
     </include>
+
+    <!-- Then, upscale confidence map to match rgb image dimensions -->
+    <node pkg="nodelet" type="nodelet" name="resize_conf" args="load image_proc/resize $(arg manager)" output="screen">
+      <param name="scale_height" type="double" value="2"/>
+      <param name="scale_width" type="double" value="2"/>
+
+      <remap from="image" to="depth_qvga/image_raw"/>
+      <remap from="camera_info" to="depth_qvga/camera_info"/>
+      <remap from="~image" to="depth/image_raw"/>
+      <remap from="~camera_info" to="depth/camera_info"/>
+    </node>
 
   </group> <!-- camera -->
 
