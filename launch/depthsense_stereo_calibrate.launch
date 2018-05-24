@@ -1,0 +1,75 @@
+<launch>
+  <arg name="camera" default="camera" />
+  <!-- Push down all topics/nodelets into "camera" namespace -->
+  <group ns="$(arg camera)">
+
+    <arg name="pointcloud" default="points"/>
+    <arg name="rgb" default="rgb/image_raw"/>
+    <arg name="depth" default="depth/image_raw"/>
+
+    <param name="ds_camera/depth_mode" type="int" value="0"/>
+    <param name="ds_camera/enable_accel" type="bool" value="false"/>
+
+    <node pkg="ros_depthsense_camera" type="depthsense_camera_node" name="depthsense_camera" output="screen">
+      <remap from="vertex_data" to="$(arg pointcloud)"/>
+      <remap from="rgb/image" to="$(arg rgb)"/>
+      <remap from="depth/image" to="$(arg depth)"/>
+    </node>
+
+    
+    <arg name="manager" default="camera_nodelet_manager" />
+
+    <!-- for testing manager.launch.xml -->
+    <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
+      <arg name="name" value="$(arg manager)" />
+      <arg name="num_worker_threads"  value="4" />
+    </include>
+
+    <!-- for testing processing.launch.xml -->
+    <!-- this also includes all other launch.xml files in launch/includes -->
+    <include file="$(find rgbd_launch)/launch/includes/processing.launch.xml">
+      <arg name="manager" value="$(arg manager)" />
+      <arg name="rgb_processing"                  value="false"/>
+      <arg name="ir_processing"                   value="false"/>
+      <arg name="depth_processing"                value="false"/>
+      <arg name="depth_registered_processing"     value="false"/>
+      <arg name="disparity_processing"            value="false"/>
+      <arg name="disparity_registered_processing" value="false"/>
+      <arg name="hw_registered_processing"        value="false" />
+      <arg name="sw_registered_processing"        value="false" />
+
+    </include>
+
+    <!-- First, convert mono16 to mono8 image format -->
+    <node pkg="nodelet" type="nodelet" name="converter" args="load image16to8bit/Converter $(arg manager)" output="screen">
+      <remap from="image" to="confidence/image"/>
+      <remap from="camera_info" to="confidence/camera_info"/>
+      <remap from="~image" to="confidence_8/image"/>
+      <remap from="~camera_info" to="confidence_8/camera_info"/>
+    </node>
+
+    <!-- Then, upscale confidence map to match rgb image dimensions -->
+    <node pkg="nodelet" type="nodelet" name="resize_conf" args="load image_proc/resize $(arg manager)" output="screen">
+      <param name="scale_height" type="double" value="2"/>
+      <param name="scale_width" type="double" value="2"/>
+
+      <remap from="in_image" to="confidence_8/image"/>
+      <remap from="camera_info" to="confidence_8/camera_info"/>
+      <remap from="~out_image" to="confidence_s/image"/>
+      <remap from="~camera_info" to="confidence_s/camera_info"/>
+    </node>
+
+    <!-- Then, upscale confidence map to match rgb image dimensions -->
+    <node pkg="nodelet" type="nodelet" name="resize_rgb" args="load image_proc/resize $(arg manager)" output="screen">
+      <param name="scale_height" type="double" value="1"/>
+      <param name="scale_width" type="double" value="1"/>
+
+      <remap from="in_image" to="rgb/image_raw"/>
+      <remap from="camera_info" to="rgb/camera_info"/>
+      <remap from="~out_image" to="rgb_s/image_raw"/>
+      <remap from="~camera_info" to="rgb_s/camera_info"/>
+    </node>
+
+  </group> <!-- camera -->
+
+</launch>

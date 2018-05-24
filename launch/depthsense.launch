@@ -1,5 +1,5 @@
 <launch>
-  <arg name="camera" default="depthsense" />
+  <arg name="camera" default="camera" />
   <arg name="pointcloud" default="points"/>
   <arg name="rgb" default="rgb/image_raw"/>
   <arg name="depth" default="depth/image_raw"/>

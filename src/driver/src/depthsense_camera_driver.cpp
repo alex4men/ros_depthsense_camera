@@ -1112,7 +1112,7 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
 
         sensor_msgs::ImagePtr confidence_msg = boost::make_shared<sensor_msgs::Image>();
         confidence_msg->header = _lastPtCloudMsgHeader;
-        confidence_msg->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+        confidence_msg->encoding = sensor_msgs::image_encodings::MONO16;
         confidence_msg->width = info->width;
         confidence_msg->height = info->height;
         confidence_msg->step = depth_msg->width * sizeof(int16_t);
