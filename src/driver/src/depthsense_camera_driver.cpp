@@ -809,39 +809,65 @@ void DepthSenseDriver::onNewColorNodeSampleReceived( DepthSense::ColorNode node,
 
         cam_info_msg.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
 
+        // TODO: Add camera_info_manager
         cam_info_msg.D.resize(5);
-        cam_info_msg.D[0] = _colorIntrinsics.k1;
-        cam_info_msg.D[1] = _colorIntrinsics.k2;
-        cam_info_msg.D[2] = _colorIntrinsics.p1;
-        cam_info_msg.D[3] = _colorIntrinsics.p2;
-        cam_info_msg.D[4] = _colorIntrinsics.k3;
+        // cam_info_msg.D[0] = _colorIntrinsics.k1;
+        // cam_info_msg.D[1] = _colorIntrinsics.k2;
+        // cam_info_msg.D[2] = _colorIntrinsics.p1;
+        // cam_info_msg.D[3] = _colorIntrinsics.p2;
+        // cam_info_msg.D[4] = _colorIntrinsics.k3;
+        cam_info_msg.D[0] = 0.007054993301701363;
+        cam_info_msg.D[1] = -0.06958264629867607;
+        cam_info_msg.D[2] = -0.0019334269155615589;
+        cam_info_msg.D[3] = 0.00015345039299312252;
+        cam_info_msg.D[4] = 0.0;
+
         cam_info_msg.K.fill( 0.0 );
-        cam_info_msg.K[0] = _colorIntrinsics.fx;
-        cam_info_msg.K[2] = _colorIntrinsics.cx;
-        cam_info_msg.K[4] = _colorIntrinsics.fy;
-        cam_info_msg.K[5] = _colorIntrinsics.cy;
+        // cam_info_msg.K[0] = _colorIntrinsics.fx;
+        // cam_info_msg.K[2] = _colorIntrinsics.cx;
+        // cam_info_msg.K[4] = _colorIntrinsics.fy;
+        // cam_info_msg.K[5] = _colorIntrinsics.cy;
+        // cam_info_msg.K[8] = 1.0;
+        cam_info_msg.K[0] = 589.7871411313362;
+        cam_info_msg.K[2] = 327.66285325600757;
+        cam_info_msg.K[4] = 592.2129456251632;
+        cam_info_msg.K[5] = 237.2343722768053;
         cam_info_msg.K[8] = 1.0;
 
-        cam_info_msg.R.fill( 0.0 );
-        cam_info_msg.R[0] = _extrinsics.r11;
-        cam_info_msg.R[1] = _extrinsics.r12;
-        cam_info_msg.R[2] = _extrinsics.r13;
-        cam_info_msg.R[3] = _extrinsics.r21;
-        cam_info_msg.R[4] = _extrinsics.r22;
-        cam_info_msg.R[5] = _extrinsics.r23;
-        cam_info_msg.R[6] = _extrinsics.r31;
-        cam_info_msg.R[7] = _extrinsics.r32;
-        cam_info_msg.R[8] = _extrinsics.r33;
+        // cam_info_msg.R.fill( 0.0 );
+        // cam_info_msg.R[0] = _extrinsics.r11;
+        // cam_info_msg.R[1] = _extrinsics.r12;
+        // cam_info_msg.R[2] = _extrinsics.r13;
+        // cam_info_msg.R[3] = _extrinsics.r21;
+        // cam_info_msg.R[4] = _extrinsics.r22;
+        // cam_info_msg.R[5] = _extrinsics.r23;
+        // cam_info_msg.R[6] = _extrinsics.r31;
+        // cam_info_msg.R[7] = _extrinsics.r32;
+        // cam_info_msg.R[8] = _extrinsics.r33;
+        cam_info_msg.R[0] = 0.9996143148935449;
+        cam_info_msg.R[1] = 0.00011223342085698081;
+        cam_info_msg.R[2] = 0.027770647517981712;
+        cam_info_msg.R[3] = -0.00018489418122553087;
+        cam_info_msg.R[4] = 0.9999965666514673;
+        cam_info_msg.R[5] = 0.0026139050134145296;
+        cam_info_msg.R[6] = -0.02777025880416837;
+        cam_info_msg.R[7] = -0.0026180315003161065;
+        cam_info_msg.R[8] = 0.9996109036205101;
 
         cam_info_msg.P.fill( 0.0 );
-        cam_info_msg.P[0] = _colorIntrinsics.fx;
-        cam_info_msg.P[2] = _colorIntrinsics.cx;
-        cam_info_msg.P[5] = _colorIntrinsics.fy;
-        cam_info_msg.P[6] = _colorIntrinsics.cy;
+        // cam_info_msg.P[0] = _colorIntrinsics.fx;
+        // cam_info_msg.P[2] = _colorIntrinsics.cx;
+        // cam_info_msg.P[5] = _colorIntrinsics.fy;
+        // cam_info_msg.P[6] = _colorIntrinsics.cy;
+        // cam_info_msg.P[10] = 1.0;
+        // cam_info_msg.P[3] = _extrinsics.t1;
+        // cam_info_msg.P[7] = _extrinsics.t2;
+        // cam_info_msg.P[11] = _extrinsics.t3;
+        cam_info_msg.P[0] = 604.2927860420064;
+        cam_info_msg.P[2] = 308.8128089904785;
+        cam_info_msg.P[5] = 604.2927860420064;
+        cam_info_msg.P[6] = 238.11944961547852;
         cam_info_msg.P[10] = 1.0;
-        cam_info_msg.P[3] = _extrinsics.t1;
-        cam_info_msg.P[7] = _extrinsics.t2;
-        cam_info_msg.P[11] = _extrinsics.t3;
 
         cam_info_msg.header = _lastRgbMsgHeader;
 
@@ -1127,28 +1153,55 @@ void DepthSenseDriver::onNewDepthNodeSampleReceived( DepthSense::DepthNode node,
         cam_info_msg.distortion_model = sensor_msgs::distortion_models::PLUMB_BOB;
 
         cam_info_msg.D.resize(5);
-        cam_info_msg.D[0] = _depthIntrinsics.k1;
-        cam_info_msg.D[1] = _depthIntrinsics.k2;
-        cam_info_msg.D[2] = _depthIntrinsics.p1;
-        cam_info_msg.D[3] = _depthIntrinsics.p2;
-        cam_info_msg.D[4] = _depthIntrinsics.k3;
+        // cam_info_msg.D[0] = _depthIntrinsics.k1;
+        // cam_info_msg.D[1] = _depthIntrinsics.k2;
+        // cam_info_msg.D[2] = _depthIntrinsics.p1;
+        // cam_info_msg.D[3] = _depthIntrinsics.p2;
+        // cam_info_msg.D[4] = _depthIntrinsics.k3;
+        cam_info_msg.D[0] = -0.18466141018537854;
+        cam_info_msg.D[1] = 0.13094148367696112;
+        cam_info_msg.D[2] = 0.0005443918863171997;
+        cam_info_msg.D[3] = 0.00026219310961683056;
+        cam_info_msg.D[4] = 0.0;
+
         cam_info_msg.K.fill( 0.0 );
-        cam_info_msg.K[0] = _depthIntrinsics.fx;
-        cam_info_msg.K[2] = _depthIntrinsics.cx;
-        cam_info_msg.K[4] = _depthIntrinsics.fy;
-        cam_info_msg.K[5] = _depthIntrinsics.cy;
+        // cam_info_msg.K[0] = _depthIntrinsics.fx;
+        // cam_info_msg.K[2] = _depthIntrinsics.cx;
+        // cam_info_msg.K[4] = _depthIntrinsics.fy;
+        // cam_info_msg.K[5] = _depthIntrinsics.cy;
+        // cam_info_msg.K[8] = 1.0;
+        cam_info_msg.K[0] = 227.5354089642;
+        cam_info_msg.K[2] = 161.770067494;
+        cam_info_msg.K[4] = 229.1082675105;
+        cam_info_msg.K[5] = 119.1671785695;
         cam_info_msg.K[8] = 1.0;
 
-        cam_info_msg.R.fill( 0.0 );
-        cam_info_msg.R[0] = 1.0;
-        cam_info_msg.R[4] = 1.0;
-        cam_info_msg.R[8] = 1.0;
+        // cam_info_msg.R.fill( 0.0 );
+        // cam_info_msg.R[0] = 1.0;
+        // cam_info_msg.R[4] = 1.0;
+        // cam_info_msg.R[8] = 1.0;
+        cam_info_msg.R[0] = 0.9996304930770893;
+        cam_info_msg.R[1] = 0.0008052593972229796;
+        cam_info_msg.R[2] = 0.027170367457187566;
+        cam_info_msg.R[3] = -0.0007341664003736369;
+        cam_info_msg.R[4] = 0.9999962814049965;
+        cam_info_msg.R[5] = -0.002626437868230311;
+        cam_info_msg.R[6] = -0.027172381385369527;
+        cam_info_msg.R[7] = 0.002605519810382534;
+        cam_info_msg.R[8] = 0.9996273670505252;
+
 
         cam_info_msg.P.fill( 0.0 );
-        cam_info_msg.P[0] = _depthIntrinsics.fx;
-        cam_info_msg.P[2] = _depthIntrinsics.cx;
-        cam_info_msg.P[5] = _depthIntrinsics.fy;
-        cam_info_msg.P[6] = _depthIntrinsics.cy;
+        // cam_info_msg.P[0] = _depthIntrinsics.fx;
+        // cam_info_msg.P[2] = _depthIntrinsics.cx;
+        // cam_info_msg.P[5] = _depthIntrinsics.fy;
+        // cam_info_msg.P[6] = _depthIntrinsics.cy;
+        // cam_info_msg.P[10] = 1.0;
+        cam_info_msg.P[0] = 302.146393021;
+        cam_info_msg.P[2] = 154.4064044952;
+        cam_info_msg.P[3] = -7.8788986632;
+        cam_info_msg.P[5] = 302.146393021;
+        cam_info_msg.P[6] = 119.0597248077;
         cam_info_msg.P[10] = 1.0;
 
         cam_info_msg.header = _lastPtCloudMsgHeader;
